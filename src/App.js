@@ -12,7 +12,9 @@ import TableBody from "@material-ui/core/TableBody";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
 import React, { useState } from "react";
-import { CheckBox } from "@material-ui/icons";
+import Checkbox from "@material-ui/core/Checkbox";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Footer from "./Footer";
 
 const useStyles = makeStyles({
   table: {
@@ -23,16 +25,42 @@ const useStyles = makeStyles({
 function App() {
   const classes = useStyles();
 
-  let [data, setData] = useState([]);
-
+  let [toDo, setToDo] = useState([]);
+  let [done, setDone] = useState([]);
   let [text, setText] = useState("");
 
-  function addData() {
-    setData([...data, { id: data.length, text }]);
+  function addToDo() {
+    setToDo([...toDo, { id: toDo.length, text }]);
   }
 
   function handleValueChanged(event) {
     setText(event.target.value);
+  }
+
+  function handleChecked(data) {
+    let toDoList = toDo;
+    toDoList.pop(data);
+    setToDo(toDoList);
+    setDone([...done, data]);
+  }
+
+  function handleUnChecked(data) {
+    let doneList = done;
+    doneList.pop(data);
+    setDone(doneList);
+    setToDo([...toDo, data]);
+  }
+
+  function Remove(row, type) {
+    if (type === "toDo") {
+      let toDoList = toDo;
+      toDoList.pop(row);
+      setToDo(toDoList);
+    } else {
+      let doneList = done;
+      doneList.pop(row);
+      setDone(doneList);
+    }
   }
 
   function ReturnToDoList() {
@@ -48,15 +76,19 @@ function App() {
               <TableCell>ID</TableCell>
               <TableCell>Item</TableCell>
               <TableCell>Finish</TableCell>
+              <TableCell>Remove</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row) => (
+            {toDo.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
                 <TableCell>{row.text}</TableCell>
                 <TableCell>
-                  <CheckBox />
+                  <Checkbox onChange={() => handleChecked(row)} />
+                </TableCell>
+                <TableCell>
+                  <DeleteIcon onClick={() => Remove(row, "toDo")} />
                 </TableCell>
               </TableRow>
             ))}
@@ -65,11 +97,65 @@ function App() {
       </TableContainer>
     );
   }
+
+  function ReturnDoneList() {
+    return (
+      <TableContainer component={Paper}>
+        <Table
+          className={classes.table}
+          size="small"
+          aria-label="a dense table"
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Item</TableCell>
+              <TableCell>Undo</TableCell>
+              <TableCell>Remove</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {done.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{row.text}</TableCell>
+                <TableCell>
+                  <Checkbox checked onChange={() => handleUnChecked(row)} />
+                </TableCell>
+                <TableCell>
+                  <DeleteIcon onClick={() => Remove(row, "done")} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
+
   return (
     <div className="App">
       <header className="header"> To Do List</header>
-
       <div className="container">
+        <div className="button-div">
+          <Grid container justifyContent="center" spacing={1}>
+            <Grid item xs={6}>
+              <TextField
+                label="Novo Item"
+                id="outlined-size-small"
+                variant="outlined"
+                size="small"
+                onChange={handleValueChanged}
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <Button variant="contained" onClick={addToDo}>
+                Adicionar
+              </Button>
+            </Grid>
+          </Grid>
+        </div>
+        <br />
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <div className="header-list">To Do</div>
@@ -77,30 +163,12 @@ function App() {
           </Grid>
           <Grid item xs={6}>
             <div className="header-list">Done</div>
-            {ReturnToDoList()}
+            {ReturnDoneList()}
           </Grid>
         </Grid>
-
         <br />
       </div>
-      <div className="button-div">
-        <Grid container justifyContent="center" spacing={1}>
-          <Grid item xs={6}>
-            <TextField
-              label="Novo Item"
-              id="outlined-size-small"
-              variant="outlined"
-              size="small"
-              onChange={handleValueChanged}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <Button variant="contained" color="secondary" onClick={addData}>
-              Adicionar
-            </Button>
-          </Grid>
-        </Grid>
-      </div>
+      <Footer />
     </div>
   );
 }

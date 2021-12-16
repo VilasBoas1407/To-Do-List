@@ -1,0 +1,38 @@
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  background-color: #c7323e;
+  text-align: center;
+  font-family: BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+    "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 12px;
+  color: white;
+  height: 30px;
+  padding-bottom: 15px;
+}
+.footer label {
+  padding-top: 5%;
+  align-content: center;
+  margin-left: 5%;
+  margin-top: 5%;
+}
+
+.social-media {
+  display: grid;
+  position: fixed;
+}
+
+.github {
+  position: fixed;
+  right: 8%;
+  bottom: 1%;
+}
+
+.linkedIn {
+  position: fixed;
+  right: 5%;
+  bottom: 1%;
+}
